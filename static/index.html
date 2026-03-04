@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyundai DMS — Business Intelligence Dashboard</title>
+    <meta name="description" content="Next-Gen Dealership Management System BI Dashboard — Hyundai Autoever">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        hyundai: {
+                            dark: '#002C5F',
+                            blue: '#00AAD2',
+                            light: '#E4F5FA',
+                            accent: '#0073C5',
+                            steel: '#1B3C6E',
+                            navy: '#001B3D'
+                        }
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-gray-950 text-white font-sans min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 nav-glass border-b border-white/10">
+        <div class="max-w-[1600px] mx-auto px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-lg bg-gradient-to-br from-hyundai-blue to-hyundai-accent flex items-center justify-center font-bold text-lg shadow-lg shadow-hyundai-blue/30">
+                    H</div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">Hyundai <span class="text-hyundai-blue">DMS</span></h1>
+                    <p class="text-[10px] text-gray-400 -mt-0.5 tracking-widest uppercase">Business Intelligence</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="showSection('dashboard')" class="nav-btn active" id="nav-dashboard">Dashboard</button>
+                <button onclick="showSection('annual')" class="nav-btn" id="nav-annual">Annual Report</button>
+                <button onclick="showSection('leads')" class="nav-btn" id="nav-leads">Lead Conversion</button>
+                <button onclick="showSection('regional')" class="nav-btn" id="nav-regional">Regional
+                    Performance</button>
+                <button onclick="showSection('invoice')" class="nav-btn" id="nav-invoice">Invoice Lookup</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-[1600px] mx-auto px-6 pt-20 pb-12">
+
+        <!-- ═══ SECTION: Dashboard ═══ -->
+        <section id="section-dashboard" class="section-content">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold">Executive Dashboard</h2>
+                <p class="text-gray-400 text-sm mt-1">FY 2025 — Key Performance Indicators</p>
+            </div>
+
+            <!-- KPI Cards -->
+            <div id="kpi-cards" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+                <!-- Filled by JS -->
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="card p-6">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Monthly Sales Trend
+                    </h3>
+                    <div class="h-72"><canvas id="dashMonthlySalesChart"></canvas></div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Model-wise
+                        Distribution</h3>
+                    <div class="h-72"><canvas id="dashModelChart"></canvas></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ SECTION: Annual Sales Report ═══ -->
+        <section id="section-annual" class="section-content hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold">Annual Sales Report</h2>
+                <p class="text-gray-400 text-sm mt-1">Jan – Dec 2025 · Month-by-month breakdown</p>
+            </div>
+            <div class="grid lg:grid-cols-3 gap-6 mb-8">
+                <div class="card p-6 lg:col-span-2">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Monthly Units Sold &
+                        Revenue</h3>
+                    <div class="h-80"><canvas id="annualBarChart"></canvas></div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Colour-wise Breakdown
+                    </h3>
+                    <div class="h-80"><canvas id="colourPieChart"></canvas></div>
+                </div>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-6">
+                <div class="card p-6">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Branch Revenue
+                        Contribution</h3>
+                    <div class="h-72"><canvas id="branchPieChart"></canvas></div>
+                </div>
+                <div class="card p-6 overflow-x-auto">
+                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Branch Leaderboard
+                    </h3>
+                    <table class="w-full text-sm" id="branchTable">
+                        <thead>
+                            <tr class="text-gray-400 border-b border-white/10">
+                                <th class="py-2 text-left">Branch</th>
+                                <th class="py-2 text-left">City</th>
+                                <th class="py-2 text-right">Units</th>
+                                <th class="py-2 text-right">Revenue (₹)</th>
+                                <th class="py-2 text-right">Share %</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ SECTION: Lead Conversion ═══ -->
+        <section id="section-leads" class="section-content hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold">Lead Conversion Report</h2>
+                <p class="text-gray-400 text-sm mt-1">Branch-wise enquiry funnel analysis · 2025</p>
+            </div>
+            <div class="card p-6 mb-6">
+                <div class="h-72"><canvas id="leadConversionChart"></canvas></div>
+            </div>
+            <div class="card p-6 overflow-x-auto">
+                <table class="w-full text-sm" id="leadTable">
+                    <thead>
+                        <tr class="text-gray-400 border-b border-white/10">
+                            <th class="py-2 text-left">Branch</th>
+                            <th class="py-2 text-left">Dealer</th>
+                            <th class="py-2 text-left">City</th>
+                            <th class="py-2 text-right">Enquiries</th>
+                            <th class="py-2 text-right">Converted</th>
+                            <th class="py-2 text-right">Lost</th>
+                            <th class="py-2 text-right">Pipeline</th>
+                            <th class="py-2 text-right">Rate %</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ═══ SECTION: Regional Performance ═══ -->
+        <section id="section-regional" class="section-content hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold">Regional Performance Report</h2>
+                <p class="text-gray-400 text-sm mt-1">Variant-level sales breakdown by City & Revenue</p>
+            </div>
+            <div class="card p-6 overflow-x-auto">
+                <table class="w-full text-[11px] lg:text-xs border-collapse" id="regionalTable">
+                    <thead>
+                        <tr class="text-gray-400 border-b border-white/10">
+                            <th class="py-3 px-2 text-left border-r border-white/5" rowspan="2">Model / Variant</th>
+                            <th class="py-2 px-2 text-center border-r border-white/5" colspan="2">Chennai</th>
+                            <th class="py-2 px-2 text-center border-r border-white/5" colspan="2">Bengaluru</th>
+                            <th class="py-2 px-2 text-center border-r border-white/5" colspan="2">Hyderabad</th>
+                            <th class="py-2 px-2 text-center border-r border-white/5" colspan="2">New Delhi</th>
+                            <th class="py-2 px-2 text-center border-r border-white/5" colspan="2">Mumbai</th>
+                            <th class="py-2 px-2 text-center bg-hyundai-blue/10" colspan="2">GRAND TOTAL</th>
+                        </tr>
+                        <tr class="text-[10px] text-gray-500 border-b border-white/10 uppercase tracking-wider">
+                            <th class="py-2 px-1 text-right">Units</th>
+                            <th class="py-2 px-1 text-right border-r border-white/5">Income</th>
+                            <th class="py-2 px-1 text-right">Units</th>
+                            <th class="py-2 px-1 text-right border-r border-white/5">Income</th>
+                            <th class="py-2 px-1 text-right">Units</th>
+                            <th class="py-2 px-1 text-right border-r border-white/5">Income</th>
+                            <th class="py-2 px-1 text-right">Units</th>
+                            <th class="py-2 px-1 text-right border-r border-white/5">Income</th>
+                            <th class="py-2 px-1 text-right">Units</th>
+                            <th class="py-2 px-1 text-right border-r border-white/5">Income</th>
+                            <th class="py-2 px-1 text-right bg-hyundai-blue/10">Total Units</th>
+                            <th class="py-2 px-1 text-right bg-hyundai-blue/10">Total Income</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ═══ SECTION: Invoice Lookup ═══ -->
+        <section id="section-invoice" class="section-content hidden">
+            <div class="mb-8 flex items-end gap-4 flex-wrap">
+                <div>
+                    <h2 class="text-2xl font-bold">Invoice & Booking History</h2>
+                    <p class="text-gray-400 text-sm mt-1">Customer journey from enquiry to payment</p>
+                </div>
+                <div class="flex gap-3 items-end">
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Select Customer</label>
+                        <select id="customerSelect"
+                            class="bg-gray-800 border border-white/10 rounded-lg px-4 py-2 text-sm focus:border-hyundai-blue focus:outline-none min-w-[220px]">
+                            <option value="">— Select —</option>
+                        </select>
+                    </div>
+                    <button onclick="loadInvoice()"
+                        class="bg-hyundai-blue hover:bg-hyundai-accent text-white px-6 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg shadow-hyundai-blue/20">Fetch</button>
+                </div>
+            </div>
+            <div id="invoiceContent"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-6 text-center text-xs text-gray-600">
+        © 2025 Hyundai Autoever · Next-Gen Dealership Management System
+    </footer>
+
+    <script src="dashboard.js"></script>
+</body>
+
+</html>
